@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Link {
+  id             Int      @id @default(autoincrement())
+  title          String
+  shortCode      String   @unique
+  destinationUrl String
+
+  isActive       Boolean  @default(true)
+
+  // Statistics
+  clicks         Int      @default(0)
+  visitors       Int      @default(0)
+  conversions    Int      @default(0)
+
+  // Device Statistics
+  mobileClicks   Int      @default(0)
+  desktopClicks  Int      @default(0)
+  tabletClicks   Int      @default(0)
+
+  // Top Country
+  topCountry     String?  @default("No data")
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  clicksData Click[]
+  @@map("links")
+}
+model Click {
+  id              Int      @id @default(autoincrement())
+
+  linkId          Int
+  link            Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  ipAddress       String?
+  visitorId       String?
+  cookieId        String?
+
+  browser         String?
+  operatingSystem String?
+  deviceType      String?
+
+  country         String?
+  city            String?
+
+  referrer        String?
+  userAgent       String?
+
+  isUnique        Boolean  @default(false)
+
+  clickedAt       DateTime @default(now())
+
+  @@index([linkId])
+  @@index([visitorId])
+}
