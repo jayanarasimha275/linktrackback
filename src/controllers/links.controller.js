@@ -1,8 +1,8 @@
 import {
   fetchAllLinks,
   fetchLinkById,
+  fetchLinkClicks,
   addLink,
-  trackLinkClick,
 } from "../services/links.service.js";
 
 export const getLinks = async (req, res) => {
@@ -75,4 +75,15 @@ export const redirectLink = async (req, res) => {
   }
 
   return res.redirect(link.destinationUrl);
+};
+
+export const getLinkClicks = async (req, res) => {
+  const { id } = req.params;
+
+  const clicks = await fetchLinkClicks(id);
+
+  return res.status(200).json({
+    success: true,
+    data: clicks,
+  });
 };

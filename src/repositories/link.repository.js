@@ -82,3 +82,13 @@ export const findUniqueVisitorClick = async (linkId, visitorId) => {
     },
   });
 };
+export const findClicksByLinkId = async (linkId) => {
+  return prisma.click.findMany({
+    where: {
+      linkId: Number(linkId),
+    },
+    orderBy: {
+      clickedAt: "desc",
+    },
+  });
+};

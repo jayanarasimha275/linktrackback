@@ -7,6 +7,7 @@ import {
   findAllLinks,
   findLinkById,
   findLinkByShortCode,
+  findClicksByLinkId,
   createLinkRecord,
   incrementLinkClicks,
   createClickRecord,
@@ -20,7 +21,9 @@ export const fetchAllLinks = async () => {
 export const fetchLinkById = async (id) => {
   return findLinkById(id);
 };
-
+export const fetchLinkClicks = async (id) => {
+  return findClicksByLinkId(id);
+};
 export const fetchLinkByShortCode = async (shortCode) => {
   return findLinkByShortCode(shortCode);
 };
