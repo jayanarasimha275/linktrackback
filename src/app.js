@@ -7,29 +7,50 @@ import trackingRoutes from "./routes/tracking.routes.js";
 
 const app = express();
 
+console.log("🚀 APP VERSION: CORS DEBUG V2");
+
 app.set("trust proxy", true);
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.originalUrl}`);
+  console.log("Origin:", req.headers.origin);
+  next();
+});
 
 app.use(
   cors({
     origin(origin, callback) {
       console.log("Incoming Origin:", origin);
 
-      if (!origin) return callback(null, true);
+      // Allow requests without Origin (browser URL, curl, Postman)
+      if (!origin) {
+        console.log("Allowed: No Origin");
+        return callback(null, true);
+      }
 
-      if (
-        origin === "http://localhost:3000" ||
-        origin.endsWith(".vercel.app")
-      ) {
-        console.log("Allowed:", origin);
+      // Allow localhost
+      if (origin === "http://localhost:3000") {
+        console.log("Allowed localhost");
+        return callback(null, true);
+      }
+
+      // Allow ALL Vercel deployments
+      if (origin.endsWith(".vercel.app")) {
+        console.log("Allowed Vercel:", origin);
         return callback(null, true);
       }
 
       console.log("Blocked:", origin);
-      callback(new Error(`Origin ${origin} not allowed`));
+      return callback(new Error(`Origin ${origin} not allowed`));
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+app.options("*", cors());
+
 app.use(cookieParser());
 app.use(express.json());
 
