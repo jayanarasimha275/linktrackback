@@ -12,8 +12,10 @@ app.set("trust proxy", true);
 app.use(
   cors({
     origin(origin, callback) {
+      // Allow requests without an Origin (e.g. browser URL bar, curl)
       if (!origin) return callback(null, true);
 
+      // Allow localhost and any Vercel deployment
       if (
         origin === "http://localhost:3000" ||
         origin.endsWith(".vercel.app")
@@ -21,7 +23,9 @@ app.use(
         return callback(null, true);
       }
 
-      return callback(new Error("Not allowed by CORS"));
+      console.log("Blocked Origin:", origin);
+
+      callback(new Error(`Origin ${origin} not allowed`));
     },
     credentials: true,
   }),
