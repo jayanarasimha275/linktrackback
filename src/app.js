@@ -11,11 +11,18 @@ app.set("trust proxy", true);
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://trackflow-dashboard-two.vercel.app",
-      "https://trackflow-dashboard-ggim3grzp-jayanarasimha232-7662s-projects.vercel.app",
-    ],
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (
+        origin === "http://localhost:3000" ||
+        origin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
