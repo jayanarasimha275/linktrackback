@@ -69,6 +69,18 @@ export const incrementLinkClicks = async (id) => {
     },
   });
 };
+export const incrementUniqueVisitors = async (id) => {
+  return prisma.link.update({
+    where: {
+      id: Number(id),
+    },
+    data: {
+      visitors: {
+        increment: 1,
+      },
+    },
+  });
+};
 export const createClickRecord = async (data) => {
   return prisma.click.create({
     data,

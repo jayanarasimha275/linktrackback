@@ -10,6 +10,7 @@ import {
   findClicksByLinkId,
   createLinkRecord,
   incrementLinkClicks,
+  incrementUniqueVisitors,
   createClickRecord,
   findUniqueVisitorClick,
 } from "../repositories/link.repository.js";
@@ -87,7 +88,8 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
   const existingVisitor = await findUniqueVisitorClick(link.id, visitorId);
 
   const isUnique = !existingVisitor;
-
+  console.log("Visitor ID:", visitorId);
+  console.log("Is Unique:", isUnique);
   await createClickRecord({
     linkId: link.id,
 
