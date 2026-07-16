@@ -89,6 +89,7 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
 
   const isUnique = !existingVisitor;
   console.log("Visitor ID:", visitorId);
+  console.log("Existing Visitor:", existingVisitor);
   console.log("Is Unique:", isUnique);
   await createClickRecord({
     linkId: link.id,
