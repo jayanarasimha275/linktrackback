@@ -75,25 +75,42 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
     return null;
   }
 
+  // Increment total clicks
   await incrementLinkClicks(link.id);
 
+  // Parse browser/device
   const parser = new UAParser(req.get("user-agent"));
-
   const result = parser.getResult();
+
+  // Detect location
   const geo = geoip.lookup(req.ip);
 
   const country = geo?.country || "Unknown";
   const city = geo?.city || "Unknown";
 
+  // Check if this visitor already clicked this link
   const existingVisitor = await findUniqueVisitorClick(link.id, visitorId);
 
   const isUnique = !existingVisitor;
+
+  console.log("=================================");
+  console.log("Short Code:", shortCode);
+  console.log("Link ID:", link.id);
   console.log("Visitor ID:", visitorId);
   console.log("Existing Visitor:", existingVisitor);
   console.log("Is Unique:", isUnique);
+  console.log("=================================");
+
+  // Increment unique visitors only once
   if (isUnique) {
+    console.log("Incrementing visitors...");
+
     await incrementUniqueVisitors(link.id);
+
+    console.log("Visitors incremented.");
   }
+
+  // Save click history
   await createClickRecord({
     linkId: link.id,
 
