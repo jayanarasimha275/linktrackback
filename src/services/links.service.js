@@ -110,26 +110,17 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
     console.log("Visitors incremented.");
   }
 
-  // Save click history
   await createClickRecord({
     linkId: link.id,
-
     visitorId,
-
     ipAddress: req.ip,
-
     userAgent: req.get("user-agent"),
-
     browser: result.browser.name || "Unknown",
-
     operatingSystem: result.os.name || "Unknown",
-
     deviceType: result.device.type || "Desktop",
-
     country,
-
     city,
-
+    referrer: req.get("referer") || req.get("referrer") || "Direct",
     isUnique,
   });
 
