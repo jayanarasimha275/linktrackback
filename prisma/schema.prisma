@@ -21,10 +21,9 @@ model Link {
   conversions Int @default(0)
 
   // Device Statistics
-  mobileClicks   Int     @default(0)
-  desktopClicks  Int     @default(0)
-  tabletClicks   Int     @default(0)
-  browserVersion String?
+  mobileClicks  Int @default(0)
+  desktopClicks Int @default(0)
+  tabletClicks  Int @default(0)
 
   // Top Country
   topCountry String? @default("No data")
@@ -47,6 +46,7 @@ model Click {
   cookieId  String?
 
   browser         String?
+  browserVersion  String?
   operatingSystem String?
   deviceType      String?
 

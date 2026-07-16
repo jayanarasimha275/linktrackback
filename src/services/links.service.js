@@ -116,6 +116,8 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
     ipAddress: req.ip,
     userAgent: req.get("user-agent"),
     browser: result.browser.name || "Unknown",
+
+    browserVersion: result.browser.version || "Unknown",
     operatingSystem: result.os.name || "Unknown",
     deviceType: result.device.type || "Desktop",
     country,
