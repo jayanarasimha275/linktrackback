@@ -111,6 +111,10 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
 
     console.log("Visitors incremented.");
   }
+  console.log("Data being saved:", {
+    browser: result.browser.name || "Unknown",
+    browserVersion: result.browser.version || "Unknown",
+  });
 
   await createClickRecord({
     linkId: link.id,
