@@ -86,11 +86,24 @@ export const createClickRecord = async (data) => {
     data,
   });
 };
-export const findUniqueVisitorClick = async (linkId, visitorId) => {
+export const findUniqueVisitorClick = async ({
+  linkId,
+  visitorId,
+  ipAddress,
+  browser,
+  browserVersion,
+  operatingSystem,
+  deviceType,
+}) => {
   return prisma.click.findFirst({
     where: {
       linkId,
       visitorId,
+      ipAddress,
+      browser,
+      browserVersion,
+      operatingSystem,
+      deviceType,
     },
   });
 };

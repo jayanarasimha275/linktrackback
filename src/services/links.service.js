@@ -91,7 +91,15 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
   const city = geo?.city || "Unknown";
 
   // Check if this visitor already clicked this link
-  const existingVisitor = await findUniqueVisitorClick(link.id, visitorId);
+  const existingVisitor = await findUniqueVisitorClick({
+    linkId: link.id,
+    visitorId,
+    ipAddress: req.ip,
+    browser: result.browser.name || "Unknown",
+    browserVersion: result.browser.version || "Unknown",
+    operatingSystem: result.os.name || "Unknown",
+    deviceType: result.device.type || "Desktop",
+  });
 
   const isUnique = !existingVisitor;
 
