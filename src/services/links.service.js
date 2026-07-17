@@ -11,6 +11,7 @@ import {
   createLinkRecord,
   incrementLinkClicks,
   incrementUniqueVisitors,
+  incrementUniqueClicks,
   createClickRecord,
   findUniqueVisitorClick,
 } from "../repositories/link.repository.js";
@@ -76,7 +77,9 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
   }
 
   // Increment total clicks
-  await incrementLinkClicks(link.id);
+  const updatedLink = await incrementUniqueClicks(link.id);
+
+  console.log("Unique Clicks Updated:", updatedLink.uniqueClicks);
 
   // Parse browser/device
   const parser = new UAParser(req.get("user-agent"));
@@ -113,11 +116,12 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
 
   // Increment unique visitors only once
   if (isUnique) {
-    console.log("Incrementing visitors...");
+    console.log("Incrementing unique metrics...");
 
     await incrementUniqueVisitors(link.id);
+    await incrementUniqueClicks(link.id);
 
-    console.log("Visitors incremented.");
+    console.log("Unique metrics incremented.");
   }
   console.log("Data being saved:", {
     browser: result.browser.name || "Unknown",

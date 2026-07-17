@@ -117,3 +117,16 @@ export const findClicksByLinkId = async (linkId) => {
     },
   });
 };
+
+export const incrementUniqueClicks = async (id) => {
+  return prisma.link.update({
+    where: {
+      id: Number(id),
+    },
+    data: {
+      uniqueClicks: {
+        increment: 1,
+      },
+    },
+  });
+};
