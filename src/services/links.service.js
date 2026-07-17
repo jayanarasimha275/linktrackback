@@ -82,6 +82,8 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
   const parser = new UAParser(req.get("user-agent"));
   const result = parser.getResult();
 
+  console.log("UA Result:", result);
+  console.log("Browser:", result.browser);
   // Detect location
   const geo = geoip.lookup(req.ip);
 
