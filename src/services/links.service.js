@@ -116,13 +116,12 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
     browserVersion: result.browser.version || "Unknown",
   });
 
-  await createClickRecord({
+  const click = await createClickRecord({
     linkId: link.id,
     visitorId,
     ipAddress: req.ip,
     userAgent: req.get("user-agent"),
     browser: result.browser.name || "Unknown",
-
     browserVersion: result.browser.version || "Unknown",
     operatingSystem: result.os.name || "Unknown",
     deviceType: result.device.type || "Desktop",
@@ -131,6 +130,8 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
     referrer: req.get("referer") || req.get("referrer") || "Direct",
     isUnique,
   });
+
+  console.log("Saved Click:", click);
 
   return link;
 };
