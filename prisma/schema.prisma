@@ -7,6 +7,31 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  ADMIN
+  PUBLISHER
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  name     String
+  email    String @unique
+  password String
+
+  role Role @default(PUBLISHER)
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  links Link[]
+
+  @@map("users")
+}
+
 model Link {
   id             Int    @id @default(autoincrement())
   title          String
@@ -14,6 +39,10 @@ model Link {
   destinationUrl String
 
   isActive Boolean @default(true)
+
+  // Owner
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Statistics
   clicks       Int @default(0)
@@ -29,15 +58,19 @@ model Link {
   // Top Country
   topCountry String? @default("No data")
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
   clicksData Click[]
 
+  @@index([userId])
   @@map("links")
 }
 
 model Click {
-  id Int @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
+  clickId String? @unique @default(cuid())
 
   linkId Int
   link   Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
@@ -61,6 +94,5 @@ model Click {
 
   clickedAt DateTime @default(now())
 
-  @@index([linkId])
-  @@index([visitorId])
+  @@index([linkId, visitorId, ipAddress, browser, browserVersion, operatingSystem, deviceType])
 }

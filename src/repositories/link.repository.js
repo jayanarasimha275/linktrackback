@@ -1,7 +1,10 @@
 import prisma from "../config/prisma.js";
 
-export const findAllLinks = async () => {
+export const findAllLinks = async (userId) => {
   return prisma.link.findMany({
+    where: {
+      userId: Number(userId),
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -28,6 +31,7 @@ export const createLinkRecord = async ({
   title,
   shortCode,
   destinationUrl,
+  userId,
   isActive,
   clicks,
   visitors,
@@ -42,6 +46,7 @@ export const createLinkRecord = async ({
       title,
       shortCode,
       destinationUrl,
+      userId,
 
       isActive,
 

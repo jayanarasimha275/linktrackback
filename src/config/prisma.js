@@ -14,4 +14,6 @@ const prisma = new PrismaClient({
   log: ["query"],
 });
 
+console.log("Prisma keys:", Object.keys(prisma));
+console.log("prisma.user =", prisma.user);
 export default prisma;

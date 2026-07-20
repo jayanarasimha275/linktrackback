@@ -6,7 +6,7 @@ import {
 } from "../services/links.service.js";
 
 export const getLinks = async (req, res) => {
-  const links = await fetchAllLinks();
+  const links = await fetchAllLinks(req.user.id);
 
   res.status(200).json({
     success: true,
@@ -34,7 +34,6 @@ export const getLinkById = async (req, res) => {
 
 export const createLink = async (req, res) => {
   const { title, destinationUrl } = req.body;
-
   if (!title || !destinationUrl) {
     return res.status(400).json({
       success: false,
@@ -45,6 +44,7 @@ export const createLink = async (req, res) => {
   const link = await addLink({
     title,
     destinationUrl,
+    userId: req.user.id,
 
     isActive: true,
 

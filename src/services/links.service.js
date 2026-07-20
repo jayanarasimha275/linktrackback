@@ -16,8 +16,8 @@ import {
   findUniqueVisitorClick,
 } from "../repositories/link.repository.js";
 
-export const fetchAllLinks = async () => {
-  return findAllLinks();
+export const fetchAllLinks = async (userId) => {
+  return findAllLinks(userId);
 };
 
 export const fetchLinkById = async (id) => {
@@ -33,6 +33,7 @@ export const fetchLinkByShortCode = async (shortCode) => {
 export const addLink = async ({
   title,
   destinationUrl,
+  userId,
   isActive,
   clicks,
   visitors,
@@ -54,17 +55,14 @@ export const addLink = async ({
     title,
     shortCode,
     destinationUrl,
-
+    userId,
     isActive,
-
     clicks,
     visitors,
     conversions,
-
     mobileClicks,
     desktopClicks,
     tabletClicks,
-
     topCountry,
   });
 };
@@ -77,7 +75,7 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
   }
 
   // Increment total clicks
-  const updatedLink = await incrementUniqueClicks(link.id);
+  const updatedLink = await incrementLinkClicks(link.id);
 
   console.log("Unique Clicks Updated:", updatedLink.uniqueClicks);
 

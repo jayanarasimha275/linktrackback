@@ -6,14 +6,13 @@ import {
   createLink,
   getLinkClicks,
 } from "../controllers/links.controller.js";
+import { authenticate } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/", getLinks);
-
 router.get("/:id/clicks", getLinkClicks);
-router.get("/:id", getLinkById);
+router.get("/", authenticate, getLinks);
 
-router.post("/", createLink);
+router.post("/", authenticate, createLink);
 
 export default router;

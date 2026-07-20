@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 
 import linksRoutes from "./routes/links.routes.js";
 import trackingRoutes from "./routes/tracking.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 
@@ -58,7 +59,7 @@ app.get("/", (req, res) => {
     message: "Link Tracker API is running",
   });
 });
-
+app.use("/api/auth", authRoutes);
 app.use("/api/links", linksRoutes);
 app.use("/r", trackingRoutes);
 
