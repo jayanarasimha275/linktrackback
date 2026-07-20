@@ -59,6 +59,7 @@ app.get("/", (req, res) => {
     message: "Link Tracker API is running",
   });
 });
+console.log("✅ Auth routes loaded");
 app.use("/api/auth", authRoutes);
 app.use("/api/links", linksRoutes);
 app.use("/r", trackingRoutes);
