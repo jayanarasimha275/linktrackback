@@ -3,6 +3,9 @@ import {
   fetchLinkById,
   fetchLinkClicks,
   addLink,
+  updateLink,
+  deleteLink,
+  trackLinkClick,
 } from "../services/links.service.js";
 
 export const getLinks = async (req, res) => {
@@ -85,5 +88,28 @@ export const getLinkClicks = async (req, res) => {
   return res.status(200).json({
     success: true,
     data: clicks,
+  });
+};
+
+export const updateLinkController = async (req, res) => {
+  const { id } = req.params;
+
+  const link = await updateLink(id, req.body);
+
+  return res.status(200).json({
+    success: true,
+    message: "Link updated successfully",
+    data: link,
+  });
+};
+
+export const deleteLinkController = async (req, res) => {
+  const { id } = req.params;
+
+  await deleteLink(id);
+
+  return res.status(200).json({
+    success: true,
+    message: "Link deleted successfully",
   });
 };

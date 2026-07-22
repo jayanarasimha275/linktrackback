@@ -14,6 +14,8 @@ import {
   incrementUniqueClicks,
   createClickRecord,
   findUniqueVisitorClick,
+  updateLinkRecord,
+  deleteLinkRecord,
 } from "../repositories/link.repository.js";
 
 export const fetchAllLinks = async (userId) => {
@@ -144,4 +146,12 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
   console.log("Saved Click:", click);
 
   return link;
+};
+
+export const updateLink = async (id, data) => {
+  return updateLinkRecord(id, data);
+};
+
+export const deleteLink = async (id) => {
+  return deleteLinkRecord(id);
 };

@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import cookieParser from "cookie-parser";
 
+import dashboardRoutes from "./routes/dashboard.routes.js";
 import linksRoutes from "./routes/links.routes.js";
 import trackingRoutes from "./routes/tracking.routes.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -63,5 +64,6 @@ console.log("✅ Auth routes loaded");
 app.use("/api/auth", authRoutes);
 app.use("/api/links", linksRoutes);
 app.use("/r", trackingRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 export default app;

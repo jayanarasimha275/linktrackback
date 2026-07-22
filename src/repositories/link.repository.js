@@ -135,3 +135,20 @@ export const incrementUniqueClicks = async (id) => {
     },
   });
 };
+
+export const updateLinkRecord = async (id, data) => {
+  return prisma.link.update({
+    where: {
+      id: Number(id),
+    },
+    data,
+  });
+};
+
+export const deleteLinkRecord = async (id) => {
+  return prisma.link.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+};
