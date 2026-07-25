@@ -69,10 +69,16 @@ export const trackConversion = async (pixelToken, clickId) => {
     return;
   }
 
+  if (click.linkId !== pixel.linkId) {
+    console.log("❌ Click does not belong to this link");
+    return;
+  }
+
   if (click.converted) {
     console.log("❌ Click already converted");
     return;
   }
+
 
   await prisma.click.update({
     where: {
