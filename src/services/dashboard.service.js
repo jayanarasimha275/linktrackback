@@ -6,22 +6,36 @@ export const fetchDashboardAnalytics = async (userId) => {
   const allClicks = links.flatMap((link) => link.clicksData);
 
   const summary = {
+    totalLinks: links.length,
     totalClicks: 0,
     uniqueClicks: 0,
-    uniqueVisitors: 0,
-    conversions: 0,
+    totalVisitors: 0,
+    totalConversions: 0,
+    conversionRate: 0,
+    averageClicksPerLink: 0,
   };
 
   const countries = {};
   const devices = {};
   const referrers = {};
+  const browsers = {};
 
   links.forEach((link) => {
     summary.totalClicks += link.clicks;
     summary.uniqueClicks += link.uniqueClicks;
-    summary.uniqueVisitors += link.visitors;
-    summary.conversions += link.conversions;
+    summary.totalVisitors += link.visitors;
+    summary.totalConversions += link.conversions;
   });
+  summary.conversionRate =
+    summary.totalClicks > 0
+      ? Number(
+          ((summary.totalConversions / summary.totalClicks) * 100).toFixed(2),
+        )
+      : 0;
+  summary.averageClicksPerLink =
+    summary.totalLinks > 0
+      ? Number((summary.totalClicks / summary.totalLinks).toFixed(2))
+      : 0;
 
   allClicks.forEach((click) => {
     const country = click.country || "Unknown";
@@ -32,6 +46,8 @@ export const fetchDashboardAnalytics = async (userId) => {
 
     const referrer = click.referrer || "Direct";
     referrers[referrer] = (referrers[referrer] || 0) + 1;
+    const browser = click.browser || "Unknown";
+    browsers[browser] = (browsers[browser] || 0) + 1;
   });
 
   return {
@@ -50,6 +66,10 @@ export const fetchDashboardAnalytics = async (userId) => {
     })),
 
     referrers: Object.entries(referrers).map(([name, clicks]) => ({
+      name,
+      clicks,
+    })),
+    browsers: Object.entries(browsers).map(([name, clicks]) => ({
       name,
       clicks,
     })),

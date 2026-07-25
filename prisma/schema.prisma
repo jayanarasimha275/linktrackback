@@ -7,92 +7,84 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  ADMIN
-  PUBLISHER
-}
-
 model User {
-  id Int @id @default(autoincrement())
-
-  name     String
-  email    String @unique
-  password String
-
-  role Role @default(PUBLISHER)
-
-  isActive Boolean @default(true)
-
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(PUBLISHER)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // Relations
-  links Link[]
+  links     Link[]
 
   @@map("users")
 }
 
 model Link {
-  id             Int    @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   title          String
-  shortCode      String @unique
+  shortCode      String   @unique
   destinationUrl String
-
-  isActive Boolean @default(true)
-
-  // Owner
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Statistics
-  clicks       Int @default(0)
-  uniqueClicks Int @default(0)
-  visitors     Int @default(0)
-  conversions  Int @default(0)
-
-  // Device Statistics
-  mobileClicks  Int @default(0)
-  desktopClicks Int @default(0)
-  tabletClicks  Int @default(0)
-
-  // Top Country
-  topCountry String? @default("No data")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  clicksData Click[]
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  clicks         Int      @default(0)
+  conversions    Int      @default(0)
+  desktopClicks  Int      @default(0)
+  mobileClicks   Int      @default(0)
+  tabletClicks   Int      @default(0)
+  topCountry     String?  @default("No data")
+  visitors       Int      @default(0)
+  uniqueClicks   Int      @default(0)
+  userId         Int
+  clicksData     Click[]
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pixel          Pixel?
 
   @@index([userId])
   @@map("links")
 }
 
 model Click {
-  id      Int     @id @default(autoincrement())
-  clickId String? @unique @default(cuid())
-
-  linkId Int
-  link   Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
-
-  ipAddress String?
-  visitorId String?
-  cookieId  String?
-
+  id              Int      @id @default(autoincrement())
+  linkId          Int
+  ipAddress       String?
+  visitorId       String?
+  cookieId        String?
   browser         String?
-  browserVersion  String?
   operatingSystem String?
   deviceType      String?
-
-  country String?
-  city    String?
-
-  referrer  String?
-  userAgent String?
-
-  isUnique Boolean @default(false)
-
-  clickedAt DateTime @default(now())
+  country         String?
+  city            String?
+  referrer        String?
+  userAgent       String?
+  isUnique        Boolean  @default(false)
+  clickedAt       DateTime @default(now())
+  browserVersion  String?
+  clickId         String?  @unique @default(cuid())
+  converted       Boolean  @default(false)
+  link            Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
 
   @@index([linkId, visitorId, ipAddress, browser, browserVersion, operatingSystem, deviceType])
+}
+
+model Pixel {
+  id         Int      @id @default(autoincrement())
+  linkId     Int      @unique
+  pixelName  String
+  pixelCode  String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  pixelToken String   @unique @default(cuid())
+
+  link Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@map("pixels")
+}
+
+enum Role {
+  ADMIN
+  PUBLISHER
 }

@@ -24,6 +24,9 @@ export const findLinkByShortCode = async (shortCode) => {
     where: {
       shortCode,
     },
+    include: {
+      pixel: true,
+    },
   });
 };
 
