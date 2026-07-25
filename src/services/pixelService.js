@@ -1,21 +1,25 @@
-import api from "./api";
+import request from "./api";
 
 export const getPixelByLinkId = async (linkId) => {
-  const response = await api.get(`/pixels/${linkId}`);
-  return response.data;
+  return request(`/pixels/${linkId}`);
 };
 
 export const createPixel = async (data) => {
-  const response = await api.post("/pixels", data);
-  return response.data;
+  return request("/pixels", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 };
 
 export const updatePixel = async (linkId, data) => {
-  const response = await api.put(`/pixels/${linkId}`, data);
-  return response.data;
+  return request(`/pixels/${linkId}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
 };
 
 export const deletePixel = async (linkId) => {
-  const response = await api.delete(`/pixels/${linkId}`);
-  return response.data;
+  return request(`/pixels/${linkId}`, {
+    method: "DELETE",
+  });
 };

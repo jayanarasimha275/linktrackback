@@ -43,6 +43,7 @@ export const createPixel = async (req, res) => {
       isActive,
     });
 
+      console.log("Created Pixel:", pixel);
     return res.status(201).json({
       success: true,
       message: "Pixel created successfully.",
