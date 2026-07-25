@@ -25,6 +25,7 @@ export const addPixel = async ({ linkId, pixelName, isActive }) => {
     isActive,
   });
 
+  console.log("APP_URL =", process.env.APP_URL);
   const pixelCode = `${process.env.APP_URL}/api/pixels/track/${pixel.pixelToken}?clickId={CLICK_ID}`;
 
   await updatePixelRecord(linkId, {
