@@ -44,9 +44,15 @@ export const deletePixel = async (linkId) => {
 };
 
 export const trackConversion = async (pixelToken, clickId) => {
+  console.log("========== PIXEL TRACK ==========");
+  console.log("Pixel Token:", pixelToken);
+  console.log("Click ID:", clickId);
+
   const pixel = await findPixelByToken(pixelToken);
+  console.log("Pixel Found:", pixel);
 
   if (!pixel || !pixel.isActive) {
+    console.log("❌ Pixel not found or inactive");
     return;
   }
 
@@ -56,7 +62,15 @@ export const trackConversion = async (pixelToken, clickId) => {
     },
   });
 
-  if (!click || click.converted) {
+  console.log("Click Found:", click);
+
+  if (!click) {
+    console.log("❌ Click not found");
+    return;
+  }
+
+  if (click.converted) {
+    console.log("❌ Click already converted");
     return;
   }
 
@@ -69,6 +83,8 @@ export const trackConversion = async (pixelToken, clickId) => {
     },
   });
 
+  console.log("✅ Click marked as converted");
+
   await prisma.link.update({
     where: {
       id: pixel.linkId,
@@ -79,4 +95,7 @@ export const trackConversion = async (pixelToken, clickId) => {
       },
     },
   });
+
+  console.log("✅ Link conversion count incremented");
+  console.log("========== END ==========");
 };
