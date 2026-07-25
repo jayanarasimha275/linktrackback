@@ -13,13 +13,15 @@ export const authenticate = (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
+    console.log("Received Token:", token);
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = decoded;
 
     next();
   } catch (error) {
-    console.error("JWT Verify Error:", error); // <-- add this line
+    console.error("JWT Verify Error:", error);
 
     return res.status(401).json({
       success: false,
