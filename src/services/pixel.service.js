@@ -124,8 +124,6 @@ export const trackConversion = async (pixelToken, clickId) => {
 
   const pixel = await findPixelByToken(pixelToken);
   console.log("Pixel Found:", pixel);
-  console.log("Pixel linkId:", pixel.linkId);
-  console.log("Click linkId:", click?.linkId);
 
   if (!pixel || !pixel.isActive) {
     console.log("❌ Pixel not found or inactive");
@@ -161,6 +159,8 @@ export const trackConversion = async (pixelToken, clickId) => {
     },
   });
 
+  console.log("Pixel linkId:", pixel.linkId);
+  console.log("Click linkId:", click?.linkId);
   console.log("Click:", click);
 
 
