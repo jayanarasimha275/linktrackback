@@ -138,12 +138,11 @@ export const trackConversion = async (pixelToken, clickId) => {
   });
 
   console.log("Latest clicks:", clicks.map(c => c.clickId));
-  const click = await prisma.click.findFirst({
-    where: {
-      clickId,
-    },
-  });
 
+  const click = clicks.find((c) => c.clickId === clickId);
+
+  console.log("Requested clickId:", JSON.stringify(clickId));
+  console.log("Matched Click:", click);
   console.log("Requested clickId:", JSON.stringify(clickId));
   console.log("DB Click:", click);
 
