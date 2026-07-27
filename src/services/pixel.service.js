@@ -130,6 +130,14 @@ export const trackConversion = async (pixelToken, clickId) => {
     return;
   }
 
+  const clicks = await prisma.click.findMany({
+    take: 5,
+    orderBy: {
+      clickedAt: "desc",
+    },
+  });
+
+  console.log("Latest clicks:", clicks.map(c => c.clickId));
   const click = await prisma.click.findFirst({
     where: {
       clickId,
