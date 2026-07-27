@@ -145,8 +145,12 @@ export const trackLinkClick = async (shortCode, req, visitorId) => {
 
   console.log("Saved Click:", click);
 
-  return link;
-};
+  return {
+    link,
+    click,
+  };
+}
+
 
 export const updateLink = async (id, data) => {
   return updateLinkRecord(id, data);

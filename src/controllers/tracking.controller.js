@@ -19,16 +19,23 @@ export const redirectTrackingLink = async (req, res) => {
       });
     }
 
-    const link = await findTrackingLink(shortCode, req, visitorId);
+    const result = await findTrackingLink(shortCode, req, visitorId);
 
-    if (!link) {
+    if (!result) {
       return res.status(404).json({
         success: false,
         message: "Tracking link not found or inactive",
       });
     }
 
-    return res.redirect(302, link.destinationUrl);
+    const { link, click } = result;
+
+    const separator = link.destinationUrl.includes("?") ? "&" : "?";
+
+    return res.redirect(
+      302,
+      `${link.destinationUrl}${separator}clickId=${click.clickId}`
+    );
   } catch (error) {
     console.error(error);
 

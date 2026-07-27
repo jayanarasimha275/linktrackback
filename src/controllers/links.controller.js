@@ -71,13 +71,19 @@ export const createLink = async (req, res) => {
 export const redirectLink = async (req, res) => {
   const { shortCode } = req.params;
 
-  const link = await trackLinkClick(shortCode);
+  const result = await trackLinkClick(shortCode, req);
 
-  if (!link) {
+  if (!result) {
     return res.status(404).send("Link not found");
   }
 
-  return res.redirect(link.destinationUrl);
+  const { link, click } = result;
+
+  const separator = link.destinationUrl.includes("?") ? "&" : "?";
+
+  return res.redirect(
+    `${link.destinationUrl}${separator}clickId=${click.clickId}`
+  );
 };
 
 export const getLinkClicks = async (req, res) => {
