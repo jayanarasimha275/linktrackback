@@ -143,14 +143,13 @@ export const trackConversion = async (pixelToken, clickId) => {
   });
 
   console.log("ALL CLICKS:", allClicks);
-  const result = await prisma.$queryRaw`
-    SELECT *
-    FROM "Click"
-    WHERE "clickId" = ${clickId}
-    LIMIT 1
-  `;
+  const click = await prisma.click.findFirst({
+    where: {
+      clickId: clickId,
+    },
+  });
 
-  const click = result[0];
+  console.log("Click:", click);
 
   console.log("Raw Click:", click);
 
