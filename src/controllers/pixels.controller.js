@@ -35,11 +35,17 @@ export const getPixelByLinkId = async (req, res) => {
 
 export const createPixel = async (req, res) => {
   try {
-    const { linkId, pixelName, isActive = true } = req.body;
+    const {
+      linkId,
+      pixelName,
+      pixelType = "JAVASCRIPT",
+      isActive = true,
+    } = req.body;
 
     const pixel = await addPixel({
       linkId,
       pixelName,
+      pixelType,
       isActive,
     });
 

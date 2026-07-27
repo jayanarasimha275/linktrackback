@@ -12,7 +12,12 @@ export const fetchPixelByLinkId = async (linkId) => {
   return findPixelByLinkId(linkId);
 };
 
-export const addPixel = async ({ linkId, pixelName, isActive }) => {
+export const addPixel = async ({
+  linkId,
+  pixelName,
+  isActive,
+  pixelType = "JAVASCRIPT",
+}) => {
   const existingPixel = await findPixelByLinkId(linkId);
 
   if (existingPixel) {
@@ -22,11 +27,14 @@ export const addPixel = async ({ linkId, pixelName, isActive }) => {
   const pixel = await createPixelRecord({
     linkId,
     pixelName,
+    pixelType,
     isActive,
   });
-
   console.log("APP_URL =", process.env.APP_URL);
-  const pixelCode = `<script>
+  let pixelCode = "";
+
+  if (pixel.pixelType === "JAVASCRIPT") {
+    pixelCode = `<script>
   (function () {
     const clickId = new URLSearchParams(window.location.search).get("clickId");
 
@@ -47,6 +55,11 @@ export const addPixel = async ({ linkId, pixelName, isActive }) => {
     }
   })();
   </script>`;
+  } else if (pixel.pixelType === "IMAGE") {
+    pixelCode = `<img src="${process.env.APP_URL}/api/pixels/track/${pixel.pixelToken}?clickId={CLICK_ID}" width="1" height="1" style="display:none;" />`;
+  } else if (pixel.pixelType === "POSTBACK") {
+    pixelCode = `${process.env.APP_URL}/api/pixels/track/${pixel.pixelToken}?clickId={CLICK_ID}`;
+  }
 
   await updatePixelRecord(linkId, {
     pixelCode,
@@ -56,7 +69,48 @@ export const addPixel = async ({ linkId, pixelName, isActive }) => {
 };
 
 export const updatePixel = async (linkId, data) => {
-  return updatePixelRecord(linkId, data);
+  const pixel = await findPixelByLinkId(linkId);
+
+  if (!pixel) {
+    throw new Error("Pixel not found.");
+  }
+
+  let pixelCode = pixel.pixelCode;
+
+  if (data.pixelType) {
+    if (data.pixelType === "JAVASCRIPT") {
+      pixelCode = `<script>
+(function () {
+  const clickId = new URLSearchParams(window.location.search).get("clickId");
+
+  if (!clickId) return;
+
+  const img = new Image(1, 1);
+  img.style.display = "none";
+  img.src =
+    "${process.env.APP_URL}/api/pixels/track/${pixel.pixelToken}?clickId=" +
+    encodeURIComponent(clickId);
+
+  if (document.body) {
+    document.body.appendChild(img);
+  } else {
+    window.addEventListener("DOMContentLoaded", () => {
+      document.body.appendChild(img);
+    });
+  }
+})();
+</script>`;
+    } else if (data.pixelType === "IMAGE") {
+      pixelCode = `<img src="${process.env.APP_URL}/api/pixels/track/${pixel.pixelToken}?clickId={CLICK_ID}" width="1" height="1" style="display:none;" />`;
+    } else if (data.pixelType === "POSTBACK") {
+      pixelCode = `${process.env.APP_URL}/api/pixels/track/${pixel.pixelToken}?clickId={CLICK_ID}`;
+    }
+  }
+
+  return updatePixelRecord(linkId, {
+    ...data,
+    pixelCode,
+  });
 };
 
 export const deletePixel = async (linkId) => {

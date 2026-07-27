@@ -11,13 +11,14 @@ export const findPixelByLinkId = async (linkId) => {
 export const createPixelRecord = async ({
   linkId,
   pixelName,
-
+  pixelType,
   isActive,
 }) => {
   return prisma.pixel.create({
     data: {
       linkId: Number(linkId),
       pixelName,
+      pixelType,
       isActive,
     },
   });

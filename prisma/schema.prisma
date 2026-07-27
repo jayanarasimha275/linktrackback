@@ -69,11 +69,17 @@ model Click {
   @@index([linkId, visitorId, ipAddress, browser, browserVersion, operatingSystem, deviceType])
 }
 
+enum PixelType {
+  JAVASCRIPT
+  IMAGE
+  POSTBACK
+}
 model Pixel {
   id         Int      @id @default(autoincrement())
   linkId     Int      @unique
   pixelName  String
   pixelCode  String?
+  pixelType PixelType @default(JAVASCRIPT)
   isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
