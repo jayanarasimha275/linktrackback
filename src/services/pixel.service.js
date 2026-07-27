@@ -145,10 +145,13 @@ export const trackConversion = async (pixelToken, clickId) => {
   console.log("ALL CLICKS:", allClicks);
   const click = await prisma.click.findFirst({
     where: {
-      clickId: clickId,
+      clickId: {
+        equals: clickId,
+      },
     },
   });
 
+  console.log("Click:", click);
   console.log("Click:", click);
 
   console.log("Raw Click:", click);
