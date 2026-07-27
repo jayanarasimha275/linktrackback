@@ -32,10 +32,19 @@ export const addPixel = async ({ linkId, pixelName, isActive }) => {
 
     if (!clickId) return;
 
-    const img = new Image();
+    const img = new Image(1, 1);
+    img.style.display = "none";
     img.src =
       "${process.env.APP_URL}/api/pixels/track/${pixel.pixelToken}?clickId=" +
       encodeURIComponent(clickId);
+
+    if (document.body) {
+      document.body.appendChild(img);
+    } else {
+      window.addEventListener("DOMContentLoaded", () => {
+        document.body.appendChild(img);
+      });
+    }
   })();
   </script>`;
 
