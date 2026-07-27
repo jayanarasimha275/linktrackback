@@ -130,39 +130,20 @@ export const trackConversion = async (pixelToken, clickId) => {
     return;
   }
 
-  const click = await prisma.$queryRaw`
+  const result = await prisma.$queryRaw`
     SELECT *
     FROM "Click"
     WHERE "clickId" = ${clickId}
     LIMIT 1
   `;
 
+  const click = result[0];
+
   console.log("Raw Click:", click);
 
-  console.log(
-    "Requested:",
-    JSON.stringify(clickId),
-    clickId.length,
-    typeof clickId,
-    clickId instanceof String
-  );
+  console.log("Raw Click:", click);
 
-  console.log(
-    "DB Type:",
-    typeof clicks[0].clickId,
-    clicks[0].clickId instanceof String
-  );
 
-  clicks.forEach((c) => {
-    console.log(
-      "DB:",
-      JSON.stringify(c.clickId),
-      c.clickId.length,
-      c.clickId === clickId
-    );
-  });
-  console.log("Requested clickId:", JSON.stringify(clickId));
-  console.log("DB Click:", click);
 
   if (!click) {
     console.log("❌ Click not found");
