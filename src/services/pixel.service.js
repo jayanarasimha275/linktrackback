@@ -130,29 +130,36 @@ export const trackConversion = async (pixelToken, clickId) => {
     return;
   }
 
-  const allClicks = await prisma.click.findMany({
-    select: {
-      id: true,
-      clickId: true,
-      linkId: true,
-    },
-    orderBy: {
-      id: "desc",
-    },
-    take: 5,
-  });
+  // const allClicks = await prisma.click.findMany({
+  //   select: {
+  //     id: true,
+  //     clickId: true,
+  //     linkId: true,
+  //   },
+  //   orderBy: {
+  //     id: "desc",
+  //   },
+  //   take: 5,
+  // });
 
-  console.log("ALL CLICKS:", allClicks);
-  const click = await prisma.click.findFirst({
+  // console.log("ALL CLICKS:", allClicks);
+  // const click = await prisma.click.findFirst({
+  //   where: {
+  //     id: 19,
+  //   },
+  // });
+
+
+  // console.log("Click:", click);
+
+
+  const click = await prisma.click.findUnique({
     where: {
-      id: 19,
+      clickId,
     },
   });
-
 
   console.log("Click:", click);
-
-
 
 
 
