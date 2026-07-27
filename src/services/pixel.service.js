@@ -141,8 +141,16 @@ export const trackConversion = async (pixelToken, clickId) => {
 
   const click = clicks.find((c) => c.clickId === clickId);
 
-  console.log("Requested clickId:", JSON.stringify(clickId));
-  console.log("Matched Click:", click);
+  console.log("Requested:", JSON.stringify(clickId), clickId.length);
+
+  clicks.forEach((c) => {
+    console.log(
+      "DB:",
+      JSON.stringify(c.clickId),
+      c.clickId.length,
+      c.clickId === clickId
+    );
+  });
   console.log("Requested clickId:", JSON.stringify(clickId));
   console.log("DB Click:", click);
 
