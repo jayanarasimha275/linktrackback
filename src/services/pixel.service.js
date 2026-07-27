@@ -130,16 +130,14 @@ export const trackConversion = async (pixelToken, clickId) => {
     return;
   }
 
-  const clicks = await prisma.click.findMany({
-    take: 5,
-    orderBy: {
-      clickedAt: "desc",
-    },
-  });
+  const click = await prisma.$queryRaw`
+    SELECT *
+    FROM "Click"
+    WHERE "clickId" = ${clickId}
+    LIMIT 1
+  `;
 
-  console.log("Latest clicks:", clicks.map(c => c.clickId));
-
-  const click = clicks.find((c) => c.clickId === clickId);
+  console.log("Raw Click:", click);
 
   console.log(
     "Requested:",
