@@ -130,6 +130,19 @@ export const trackConversion = async (pixelToken, clickId) => {
     return;
   }
 
+  const allClicks = await prisma.click.findMany({
+    select: {
+      id: true,
+      clickId: true,
+      linkId: true,
+    },
+    orderBy: {
+      id: "desc",
+    },
+    take: 5,
+  });
+
+  console.log("ALL CLICKS:", allClicks);
   const result = await prisma.$queryRaw`
     SELECT *
     FROM "Click"
