@@ -130,13 +130,14 @@ export const trackConversion = async (pixelToken, clickId) => {
     return;
   }
 
-  const click = await prisma.click.findUnique({
+  const click = await prisma.click.findFirst({
     where: {
       clickId,
     },
   });
 
-  console.log("Click Found:", click);
+  console.log("Requested clickId:", JSON.stringify(clickId));
+  console.log("DB Click:", click);
 
   if (!click) {
     console.log("❌ Click not found");
