@@ -8,6 +8,7 @@ import trackingRoutes from "./routes/tracking.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import pixelsRoutes from "./routes/pixels.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
+import offerRoutes from "./routes/offerRoutes.js";
 
 const app = express();
 
@@ -69,5 +70,6 @@ app.use("/r", trackingRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/pixels", pixelsRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/offers", offerRoutes);
 
 export default app;

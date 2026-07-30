@@ -73,16 +73,17 @@ enum PixelType {
   IMAGE
   POSTBACK
 }
+
 model Pixel {
-  id         Int      @id @default(autoincrement())
-  linkId     Int      @unique
+  id         Int       @id @default(autoincrement())
+  linkId     Int       @unique
   pixelName  String
   pixelCode  String?
-  pixelType PixelType @default(JAVASCRIPT)
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  pixelToken String   @unique @default(cuid())
+  pixelType  PixelType @default(JAVASCRIPT)
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  pixelToken String    @unique @default(cuid())
 
   link Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
 
@@ -92,4 +93,55 @@ model Pixel {
 enum Role {
   ADMIN
   PUBLISHER
+}
+
+model Advertiser {
+  id             String   @id @default(cuid())
+  name           String
+  companyName    String?
+  email          String?
+  phone          String?
+  destinationUrl String
+  postbackUrl    String?
+  currency       String   @default("INR")
+  status         String   @default("ACTIVE")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Offer {
+  id String @id @default(cuid())
+
+  offerName  String
+  advertiser String
+  affiliate  String?
+
+  advertiserPayout Float @default(0)
+  affiliatePayout  Float @default(0)
+
+  previewUrl  String?
+  trackingUrl String?
+  fallbackUrl String?
+
+  visibility String @default("Public")
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  status   String @default("DRAFT")
+  timezone String @default("Asia/Kolkata")
+
+  geo     String?
+  os      String?
+  browser String?
+  device  String?
+  isp     String?
+
+  assignedAffiliate String?
+
+  capType  String @default("Daily")
+  capValue Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
