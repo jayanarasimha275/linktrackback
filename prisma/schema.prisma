@@ -37,6 +37,8 @@ model Link {
   visitors       Int      @default(0)
   uniqueClicks   Int      @default(0)
   userId         Int
+  campaignId String?
+  campaign Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
   clicksData     Click[]
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   pixel          Pixel?
@@ -108,6 +110,38 @@ model Advertiser {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+model Publisher {
+  id             String   @id @default(cuid())
+
+  firstName      String
+  lastName       String
+
+  companyName    String?
+
+  email          String   @unique
+  phone          String?
+
+  password       String?
+
+  website        String?
+
+  postbackUrl    String?
+
+  apiToken       String?  @unique
+
+  status         String   @default("ACTIVE")
+
+  paymentMethod  String?
+
+  paymentDetails String?
+
+  balance        Float    @default(0)
+  campaigns Campaign[]
+
+  createdAt      DateTime @default(now())
+
+  updatedAt      DateTime @updatedAt
+}
 
 model Offer {
   id String @id @default(cuid())
@@ -141,7 +175,65 @@ model Offer {
 
   capType  String @default("Daily")
   capValue Int    @default(0)
-
+ campaigns Campaign[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+
+  name        String
+
+  offerId     String
+  offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  publisherId String
+  publisher Publisher @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+
+
+  trackingDomain String?
+  trackingCode String @unique @default(cuid())
+
+  status      String @default("ACTIVE")
+
+  trafficSource String?
+
+  dailyCap    Int    @default(0)
+
+  totalCap    Int    @default(0)
+
+  clicks       Int   @default(0)
+  conversions  Int   @default(0)
+
+  revenue      Float @default(0)
+  payout       Float @default(0)
+  clickRecords CampaignClick[]
+ links Link[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CampaignClick {
+  id           String   @id @default(cuid())
+
+  campaignId   String
+  trackingCode String
+
+  ipAddress    String?
+  userAgent    String?
+  browser      String?
+  operatingSystem String?
+  deviceType   String?
+
+  referrer     String?
+
+  country      String?
+  city         String?
+
+  clickedAt    DateTime @default(now())
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([trackingCode])
 }

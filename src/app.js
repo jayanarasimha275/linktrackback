@@ -9,6 +9,10 @@ import authRoutes from "./routes/auth.routes.js";
 import pixelsRoutes from "./routes/pixels.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 import offerRoutes from "./routes/offerRoutes.js";
+import advertiserRoutes from "./routes/advertiserRoutes.js";
+import publisherRoutes from "./routes/publisherRoutes.js";
+import campaignRoutes from "./routes/campaignRoutes.js";
+
 
 const app = express();
 
@@ -71,5 +75,16 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/pixels", pixelsRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/offers", offerRoutes);
+app.use("/api/advertisers", advertiserRoutes);
+app.use("/api/publishers", publisherRoutes);
+app.use("/api/campaigns", campaignRoutes);
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
 
 export default app;

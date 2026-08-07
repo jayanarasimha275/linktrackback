@@ -15,6 +15,13 @@ export async function getOffer(id) {
     },
   });
 }
+export async function findOfferById(id) {
+  return prisma.offer.findUnique({
+    where: {
+      id,
+    },
+  });
+}
 
 export async function createOffer(data) {
   return prisma.offer.create({
