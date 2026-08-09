@@ -202,8 +202,9 @@ model Campaign {
 
   totalCap    Int    @default(0)
 
-  clicks       Int   @default(0)
-  conversions  Int   @default(0)
+  clicks          Int   @default(0)
+  uniqueVisitors  Int   @default(0)
+  conversions     Int   @default(0)
 
   revenue      Float @default(0)
   payout       Float @default(0)
@@ -230,7 +231,8 @@ model CampaignClick {
   country      String?
   city         String?
 
-  clickedAt    DateTime @default(now())
+  clickedAt  DateTime @default(now())
+  converted  Boolean  @default(false)
 
   campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 

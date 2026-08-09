@@ -24,11 +24,7 @@ export async function findCampaignById(id) {
   });
 }
 
-export async function createCampaign(data) {
-  return prisma.campaign.create({
-    data,
-  });
-}
+
 
 export async function createCampaign(data) {
   return prisma.campaign.create({
@@ -47,6 +43,14 @@ export async function createCampaign(data) {
       dailyCap: Number(data.dailyCap ?? 0),
       totalCap: Number(data.totalCap ?? 0),
     },
+  });
+}
+export async function updateCampaign(id, data) {
+  return prisma.campaign.update({
+    where: {
+      id,
+    },
+    data,
   });
 }
 export async function deleteCampaign(id) {
@@ -89,8 +93,23 @@ export async function incrementCampaignClicks(id) {
     },
   });
 }
+
 export async function createCampaignClick(data) {
   return prisma.campaignClick.create({
-    data,
+    data: {
+      campaignId: data.campaignId,
+      trackingCode: data.trackingCode,
+
+      ipAddress: data.ipAddress ?? null,
+      userAgent: data.userAgent ?? null,
+      browser: data.browser ?? null,
+      operatingSystem: data.operatingSystem ?? null,
+      deviceType: data.deviceType ?? null,
+
+      referrer: data.referrer ?? null,
+
+      country: data.country ?? null,
+      city: data.city ?? null,
+    },
   });
 }

@@ -11,13 +11,7 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({
   adapter,
-  log: ["query"],
+  log: ["query"], // Keep this if you want to see SQL queries
 });
 
-console.log("Prisma keys:", Object.keys(prisma));
-console.log("prisma.user =", prisma.user);
-console.log("prisma.link =", prisma.link);
-console.log("prisma.click =", prisma.click);
-console.log("prisma.pixel =", prisma.pixel);
-console.log("prisma.advertiser =", prisma.advertiser);
 export default prisma;

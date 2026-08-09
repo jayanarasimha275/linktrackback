@@ -5,11 +5,14 @@ import {
   updateCampaign,
   deleteCampaign,
   incrementCampaignClicks,
+  findCampaignByOfferAndPublisher,
+  findCampaignByTrackingCode,
+  createCampaignClick,
 } from "../repositories/campaignRepository.js";
+
 import { findOfferById } from "../repositories/offerRepository.js";
 import { findPublisherById } from "../repositories/publisherRepository.js";
-import { findCampaignByOfferAndPublisher } from "../repositories/campaignRepository.js";
-import { findCampaignByTrackingCode } from "../repositories/campaignRepository.js";
+import prisma from "../config/prisma.js";
 
 export async function getCampaigns() {
   return findAllCampaigns();
@@ -64,7 +67,10 @@ export async function removeCampaign(id) {
   return deleteCampaign(id);
 }
 
-export async function getCampaignByTrackingCode(trackingCode) {
+export async function getCampaignByTrackingCode(
+  trackingCode,
+  visitorData = {}
+) {
   const campaign = await findCampaignByTrackingCode(trackingCode);
 
   if (!campaign) {
@@ -73,6 +79,40 @@ export async function getCampaignByTrackingCode(trackingCode) {
 
   if (campaign.status !== "ACTIVE") {
     throw new Error("Campaign is inactive.");
+  }
+
+  const existingClick = await prisma.campaignClick.findFirst({
+    where: {
+      campaignId: campaign.id,
+      ipAddress: visitorData.ipAddress ?? null,
+      userAgent: visitorData.userAgent ?? null,
+    },
+  });
+
+  await createCampaignClick({
+    campaignId: campaign.id,
+    trackingCode: campaign.trackingCode,
+    ipAddress: visitorData.ipAddress ?? null,
+    userAgent: visitorData.userAgent ?? null,
+    browser: visitorData.browser ?? null,
+    operatingSystem: visitorData.operatingSystem ?? null,
+    deviceType: visitorData.deviceType ?? null,
+    referrer: visitorData.referrer ?? null,
+    country: visitorData.country ?? null,
+    city: visitorData.city ?? null,
+  });
+
+  if (!existingClick) {
+    await prisma.campaign.update({
+      where: {
+        id: campaign.id,
+      },
+      data: {
+        uniqueVisitors: {
+          increment: 1,
+        },
+      },
+    });
   }
 
   await incrementCampaignClicks(campaign.id);

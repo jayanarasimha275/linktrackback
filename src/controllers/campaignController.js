@@ -7,6 +7,9 @@ import {
   getCampaignByTrackingCode,
 } from "../services/campaignService.js";
 
+import { UAParser } from "ua-parser-js";
+import geoip from "geoip-lite";
+
 export async function getAllCampaigns(req, res, next) {
   try {
     const campaigns = await getCampaigns();
@@ -76,19 +79,41 @@ export async function deleteCampaign(req, res, next) {
 }
 export async function resolveTrackingCode(req, res, next) {
   try {
+    const userAgent = req.headers["user-agent"] || "";
+
+    const parser = new UAParser(userAgent);
+    const parsed = parser.getResult();
+
+    const browser = parsed.browser.name || null;
+    const operatingSystem = parsed.os.name || null;
+    const deviceType = parsed.device.type || "desktop";
+
+    const ipAddress =
+      req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+      req.socket.remoteAddress ||
+      null;
+
+    const referrer =
+      req.headers["referer"] ||
+      req.headers["referrer"] ||
+      null;
+
+    const geo = ipAddress ? geoip.lookup(ipAddress) : null;
+
+    const country = geo?.country || null;
+    const city = geo?.city || null;
+
     const campaign = await getCampaignByTrackingCode(
       req.params.trackingCode,
       {
-        ipAddress:
-          req.headers["x-forwarded-for"]?.split(",")[0] ||
-          req.socket.remoteAddress,
-
-        userAgent: req.headers["user-agent"],
-
-        referrer:
-          req.headers["referer"] ||
-          req.headers["referrer"] ||
-          null,
+        ipAddress,
+        userAgent,
+        browser,
+        operatingSystem,
+        deviceType,
+        referrer,
+        country,
+        city,
       }
     );
 
