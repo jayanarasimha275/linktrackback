@@ -1,0 +1,241 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(PUBLISHER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  links     Link[]
+
+  @@map("users")
+}
+
+model Link {
+  id             Int      @id @default(autoincrement())
+  title          String
+  shortCode      String   @unique
+  destinationUrl String
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  clicks         Int      @default(0)
+  conversions    Int      @default(0)
+  desktopClicks  Int      @default(0)
+  mobileClicks   Int      @default(0)
+  tabletClicks   Int      @default(0)
+  topCountry     String?  @default("No data")
+  visitors       Int      @default(0)
+  uniqueClicks   Int      @default(0)
+  userId         Int
+  campaignId String?
+  campaign Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  clicksData     Click[]
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pixel          Pixel?
+
+  @@index([userId])
+  @@map("links")
+}
+
+model Click {
+  id              Int      @id @default(autoincrement())
+  linkId          Int
+  ipAddress       String?
+  visitorId       String?
+  cookieId        String?
+  browser         String?
+  operatingSystem String?
+  deviceType      String?
+  country         String?
+  city            String?
+  referrer        String?
+  userAgent       String?
+  isUnique        Boolean  @default(false)
+  clickedAt       DateTime @default(now())
+  browserVersion  String?
+  clickId         String?  @unique @default(cuid())
+  converted       Boolean  @default(false)
+  link            Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@index([linkId, visitorId, ipAddress, browser, browserVersion, operatingSystem, deviceType])
+}
+
+enum PixelType {
+  JAVASCRIPT
+  IMAGE
+  POSTBACK
+}
+
+model Pixel {
+  id         Int       @id @default(autoincrement())
+  linkId     Int       @unique
+  pixelName  String
+  pixelCode  String?
+  pixelType  PixelType @default(JAVASCRIPT)
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  pixelToken String    @unique @default(cuid())
+
+  link Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@map("pixels")
+}
+
+enum Role {
+  ADMIN
+  PUBLISHER
+}
+
+model Advertiser {
+  id             String   @id @default(cuid())
+  name           String
+  companyName    String?
+  email          String?
+  phone          String?
+  destinationUrl String
+  postbackUrl    String?
+  currency       String   @default("INR")
+  status         String   @default("ACTIVE")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+model Publisher {
+  id             String   @id @default(cuid())
+
+  firstName      String
+  lastName       String
+
+  companyName    String?
+
+  email          String   @unique
+  phone          String?
+
+  password       String?
+
+  website        String?
+
+  postbackUrl    String?
+
+  apiToken       String?  @unique
+
+  status         String   @default("ACTIVE")
+
+  paymentMethod  String?
+
+  paymentDetails String?
+
+  balance        Float    @default(0)
+  campaigns Campaign[]
+
+  createdAt      DateTime @default(now())
+
+  updatedAt      DateTime @updatedAt
+}
+
+model Offer {
+  id String @id @default(cuid())
+
+  offerName  String
+  advertiser String
+  affiliate  String?
+
+  advertiserPayout Float @default(0)
+  affiliatePayout  Float @default(0)
+
+  previewUrl  String?
+  trackingUrl String?
+  fallbackUrl String?
+
+  visibility String @default("Public")
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  status   String @default("DRAFT")
+  timezone String @default("Asia/Kolkata")
+
+  geo     String?
+  os      String?
+  browser String?
+  device  String?
+  isp     String?
+
+  assignedAffiliate String?
+
+  capType  String @default("Daily")
+  capValue Int    @default(0)
+ campaigns Campaign[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+
+  name        String
+
+  offerId     String
+  offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  publisherId String
+  publisher Publisher @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+
+
+  trackingDomain String?
+  trackingCode String @unique @default(cuid())
+
+  status      String @default("ACTIVE")
+
+  trafficSource String?
+
+  dailyCap    Int    @default(0)
+
+  totalCap    Int    @default(0)
+
+  clicks          Int   @default(0)
+  uniqueVisitors  Int   @default(0)
+  conversions     Int   @default(0)
+
+  revenue      Float @default(0)
+  payout       Float @default(0)
+  clickRecords CampaignClick[]
+ links Link[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CampaignClick {
+  id           String   @id @default(cuid())
+
+  campaignId   String
+  trackingCode String
+
+  ipAddress    String?
+  userAgent    String?
+  browser      String?
+  operatingSystem String?
+  deviceType   String?
+
+  referrer     String?
+
+  country      String?
+  city         String?
+
+  clickedAt  DateTime @default(now())
+  converted  Boolean  @default(false)
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([trackingCode])
+}

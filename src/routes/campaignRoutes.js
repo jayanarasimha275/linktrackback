@@ -7,6 +7,7 @@ import {
   updateCampaign,
   deleteCampaign,
   resolveTrackingCode,
+  getCampaignAnalyticsData,
 } from "../controllers/campaignController.js";
 
 const router = Router();
@@ -14,6 +15,7 @@ const router = Router();
 router.get("/", getAllCampaigns);
 router.get("/track/:trackingCode", resolveTrackingCode);
 
+router.get("/:id/analytics", getCampaignAnalyticsData);
 router.get("/:id", getCampaignById);
 
 

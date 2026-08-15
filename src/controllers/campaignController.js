@@ -5,6 +5,7 @@ import {
   editCampaign,
   removeCampaign,
   getCampaignByTrackingCode,
+  getCampaignAnalytics,
 } from "../services/campaignService.js";
 
 import { UAParser } from "ua-parser-js";
@@ -125,6 +126,18 @@ export async function resolveTrackingCode(req, res, next) {
     }
 
     return res.redirect(campaign.offer.trackingUrl);
+  } catch (err) {
+    next(err);
+  }
+}
+export async function getCampaignAnalyticsData(req, res, next) {
+  try {
+    const analytics = await getCampaignAnalytics(req.params.id);
+
+    res.json({
+      success: true,
+      data: analytics,
+    });
   } catch (err) {
     next(err);
   }

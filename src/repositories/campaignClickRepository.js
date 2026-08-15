@@ -5,6 +5,14 @@ export async function findCampaignClickById(id) {
     where: {
       id,
     },
+    include: {
+      campaign: {
+        include: {
+          offer: true,
+          publisher: true,
+        },
+      },
+    },
   });
 }
 
@@ -16,13 +24,13 @@ export async function findCampaignClickByTrackingCode(trackingCode) {
     orderBy: {
       clickedAt: "desc",
     },
-  });
-}
-
-export async function findCampaignClickByClickId(clickId) {
-  return prisma.campaignClick.findUnique({
-    where: {
-      id: clickId,
+    include: {
+      campaign: {
+        include: {
+          offer: true,
+          publisher: true,
+        },
+      },
     },
   });
 }

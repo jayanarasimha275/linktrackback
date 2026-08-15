@@ -121,3 +121,72 @@ export async function getCampaignByTrackingCode(
 
   return campaign;
 }
+
+export async function getCampaignAnalytics(id) {
+  const campaign = await prisma.campaign.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!campaign) {
+    throw new Error("Campaign not found.");
+  }
+
+  const clicks = await prisma.campaignClick.findMany({
+    where: {
+      campaignId: id,
+    },
+    select: {
+      ipAddress: true,
+      deviceType: true,
+      converted: true,
+    },
+  });
+
+  const totalClicks = clicks.length;
+
+  const uniqueVisitors = new Set(
+    clicks
+      .map((click) => click.ipAddress)
+      .filter(Boolean)
+  ).size;
+
+  const conversions = clicks.filter(
+    (click) => click.converted
+  ).length;
+
+  const desktop = clicks.filter(
+    (click) => click.deviceType === "desktop"
+  ).length;
+
+  const mobile = clicks.filter(
+    (click) => click.deviceType === "mobile"
+  ).length;
+
+  const tablet = clicks.filter(
+    (click) => click.deviceType === "tablet"
+  ).length;
+
+  return {
+    campaign: {
+      id: campaign.id,
+      name: campaign.name,
+      status: campaign.status,
+    },
+
+    stats: {
+      clicks: totalClicks,
+      uniqueVisitors,
+      conversions,
+      revenue: campaign.revenue,
+      payout: campaign.payout,
+    },
+
+    devices: {
+      desktop,
+      mobile,
+      tablet,
+    },
+  };
+}

@@ -12,6 +12,7 @@ import offerRoutes from "./routes/offerRoutes.js";
 import advertiserRoutes from "./routes/advertiserRoutes.js";
 import publisherRoutes from "./routes/publisherRoutes.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
+import conversionRoutes from "./routes/conversionRoutes.js";
 
 
 const app = express();
@@ -78,6 +79,10 @@ app.use("/api/offers", offerRoutes);
 app.use("/api/advertisers", advertiserRoutes);
 app.use("/api/publishers", publisherRoutes);
 app.use("/api/campaigns", campaignRoutes);
+
+
+
+app.use("/api/conversions", conversionRoutes);
 app.use((err, req, res, next) => {
   console.error(err);
 
