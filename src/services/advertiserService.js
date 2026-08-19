@@ -1,53 +1,37 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-async function apiRequest(endpoint, options = {}) {
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
-
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    console.error("API Error:", data);
-
-    throw new Error(
-      data.message ||
-        JSON.stringify(data) ||
-        `HTTP ${response.status}`
-    );
-  }
-
-  return data;
-}
+import {
+  findAllAdvertisers,
+  findAdvertiserById,
+  createAdvertiser,
+  updateAdvertiser,
+  deleteAdvertiser,
+} from "../repositories/advertiserRepository.js";
 
 export async function getAdvertisers() {
-  return apiRequest("/advertisers");
+  return findAllAdvertisers();
 }
 
 export async function getAdvertiser(id) {
-  return apiRequest(`/advertisers/${id}`);
+  const advertiser = await findAdvertiserById(id);
+
+  if (!advertiser) {
+    throw new Error("Advertiser not found.");
+  }
+
+  return advertiser;
 }
 
-export async function createAdvertiser(data) {
-  return apiRequest("/advertisers", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+export async function addAdvertiser(data) {
+  return createAdvertiser(data);
 }
 
-export async function updateAdvertiser(id, data) {
-  return apiRequest(`/advertisers/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
+export async function editAdvertiser(id, data) {
+  await getAdvertiser(id);
+
+  return updateAdvertiser(id, data);
 }
 
-export async function deleteAdvertiser(id) {
-  return apiRequest(`/advertisers/${id}`, {
-    method: "DELETE",
-  });
+export async function removeAdvertiser(id) {
+  await getAdvertiser(id);
+
+  return deleteAdvertiser(id);
 }
