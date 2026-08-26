@@ -137,12 +137,21 @@ model Publisher {
 
   balance        Float    @default(0)
   campaigns Campaign[]
+  offerAssignments OfferAssignment[]
 
   createdAt      DateTime @default(now())
 
   updatedAt      DateTime @updatedAt
+
 }
 
+model OfferCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  offers Offer[]
+}
 model Offer {
   id String @id @default(cuid())
 
@@ -150,17 +159,36 @@ model Offer {
   advertiser String
   affiliate  String?
 
+  logoUrl String?
+
+  categoryId String?
+  category   OfferCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  appId           String?
+  externalOfferId String?
+
   advertiserPayout Float @default(0)
   affiliatePayout  Float @default(0)
+
+  revenueModel    String?
+  revenueCurrency String  @default("INR")
+  payoutModel     String?
+  hidePayout      Boolean @default(false)
 
   previewUrl  String?
   trackingUrl String?
   fallbackUrl String?
+  deepLink    String?
 
-  visibility String @default("Public")
+  visibility       String  @default("Public")
+  alertAffiliates  Boolean @default(false)
 
   startDate DateTime?
   endDate   DateTime?
+
+  dailyScheduleEnabled Boolean @default(false)
+  dailyStartTime       String?
+  dailyStopTime        String?
 
   status   String @default("DRAFT")
   timezone String @default("Asia/Kolkata")
@@ -171,15 +199,21 @@ model Offer {
   device  String?
   isp     String?
 
+  targetingRules Json?
+
   assignedAffiliate String?
 
   capType  String @default("Daily")
   capValue Int    @default(0)
- campaigns Campaign[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
+  privateNote String? @db.Text
+  termsKpi    String? @db.Text
+  terms       String? @db.Text
+  campaigns   Campaign[]
+  assignments OfferAssignment[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
 model Campaign {
   id          String   @id @default(cuid())
 
@@ -214,6 +248,24 @@ model Campaign {
   updatedAt DateTime @updatedAt
 }
 
+model OfferAssignment {
+  id String @id @default(cuid())
+
+  offerId String
+  offer   Offer  @relation(fields: [offerId], references: [id], onDelete: Cascade)
+
+  publisherId String
+  publisher   Publisher @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+
+  status String @default("PENDING") // PENDING | APPROVED | REJECTED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([offerId, publisherId])
+  @@index([offerId])
+  @@index([publisherId])
+}
 model CampaignClick {
   id           String   @id @default(cuid())
 
