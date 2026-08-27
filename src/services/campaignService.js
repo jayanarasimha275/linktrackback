@@ -12,6 +12,7 @@ import {
 
 import { findOfferById } from "../repositories/offerRepository.js";
 import { findPublisherById } from "../repositories/publisherRepository.js";
+import { getAssignments } from "../repositories/offerAssignmentRepository.js";
 import prisma from "../config/prisma.js";
 
 export async function getCampaigns() {
@@ -53,6 +54,59 @@ export async function addCampaign(data) {
   }
 
   return createCampaign(data);
+}
+export async function getOrCreateCampaignForOfferAndPublisher(
+  offerId,
+  publisherId
+) {
+  const offer = await findOfferById(offerId);
+
+  if (!offer) {
+    throw new Error("Offer not found.");
+  }
+
+  const publisher = await findPublisherById(publisherId);
+
+  if (!publisher) {
+    throw new Error("Publisher not found.");
+  }
+
+  // Publisher must be APPROVED for this offer.
+  const approvedAssignments = await getAssignments({
+    offerId,
+    publisherId,
+    status: "APPROVED",
+  });
+
+  if (approvedAssignments.length === 0) {
+    throw new Error(
+      "This publisher is not approved for this offer."
+    );
+  }
+
+  // Reuse existing campaign if one already exists.
+  const existing = await findCampaignByOfferAndPublisher(
+    offerId,
+    publisherId
+  );
+
+  if (existing) {
+    return existing;
+  }
+
+  const publisherName =
+    `${publisher.firstName || ""} ${publisher.lastName || ""}`.trim();
+
+  const autoName =
+    `${offer.offerName || "Offer"} - ${
+      publisherName || publisher.email
+    }`;
+
+  return createCampaign({
+    name: autoName,
+    offerId,
+    publisherId,
+  });
 }
 
 export async function editCampaign(id, data) {

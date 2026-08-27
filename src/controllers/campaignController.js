@@ -6,6 +6,7 @@ import {
   removeCampaign,
   getCampaignByTrackingCode,
   getCampaignAnalytics,
+    getOrCreateCampaignForOfferAndPublisher,
 } from "../services/campaignService.js";
 
 import { UAParser } from "ua-parser-js";
@@ -137,6 +138,30 @@ export async function getCampaignAnalyticsData(req, res, next) {
     res.json({
       success: true,
       data: analytics,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+export async function getOrCreateCampaign(req, res, next) {
+  try {
+    const { offerId, publisherId } = req.query;
+
+    if (!offerId || !publisherId) {
+      return res.status(400).json({
+        success: false,
+        message: "offerId and publisherId are required.",
+      });
+    }
+
+    const campaign = await getOrCreateCampaignForOfferAndPublisher(
+      offerId,
+      publisherId
+    );
+
+    res.json({
+      success: true,
+      data: campaign,
     });
   } catch (err) {
     next(err);
